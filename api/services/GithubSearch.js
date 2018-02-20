@@ -1,44 +1,52 @@
 const github = require('octonode');
 const _ = require('lodash');
 
-const CLIENT_ACCESS_TOKEN = '9dbfd48ea30d2ee0c84c3410fe878a02fa0cdb35';
-
-const client = github.client(CLIENT_ACCESS_TOKEN);
+const client = github.client(sails.config.statos.githubAccessToken);
 
 const tajawalSearch = client.search();
 
-const handleResponse = (error, data) => {
-    return new Promise((resolve, reject) => {
-        resolve(data);
-    });
-};
 
-
+/**
+ *
+ * @param users
+ * @param dateRange
+ * @param status open | merged | closed
+ * @returns {Promise}
+ */
 const getPrs = (users = {}, dateRange = {}, status = 'open') => {
     return new Promise((resolve, reject) => {
         const { role, usersArray } = users;
         const usersStr = getUsers(usersArray, role);
         const dateStr = getDateRange(dateRange);
-
         tajawalSearch.issues({
             q: `user:tajawal type:pr is:${status} ${usersStr} ${dateStr}`,
             sort: 'created',
             order: 'asc'
         }, (error, data) => {
             resolve(data);
-            if (error) {
-                reject(error);
-            }
         });
     })
 };
 
 
-// status: open | merged | closed
-const prsSearch = async (users = {}, dateRange = {}, status = 'open') => {
+/**
+ *
+ * @param users
+ * @param dateRange
+ * @param status open | merged | closed
+ * @returns {Promise.<*>}
+ */
+const searchPrs = async (users = {}, dateRange = {}, status = 'open') => {
     return await getPrs(users, dateRange, status);
 };
-// role: author | assignee | reviewed-by | review-requested | commenter | mentions
+
+
+/**
+ *
+ * @param users
+ * @param role author | assignee | reviewed-by | review-requested | commenter | mentions
+ * @returns {string}
+ */
 const getUsers = (users, role = 'author') => {
     let usersStr = '';
     if (users.length > 0) {
@@ -49,9 +57,14 @@ const getUsers = (users, role = 'author') => {
     return usersStr;
 };
 
-// type: created | merged | updated
+/**
+ *
+ * @param dateRange
+ * @returns {string}
+ */
 const getDateRange = (dateRange) => {
     let dateStr = '';
+    // type: created | merged | updated
     const { type, from, to } = dateRange;
 
     if (!_.isEmpty(from) && !_.isEmpty(to)) {
@@ -64,6 +77,4 @@ const getDateRange = (dateRange) => {
     return dateStr;
 };
 
-//prsSearch(['mohammedelkady', 'ibrahim-sakr'], { from: '2018-01-01', to: '2018-01-30' }, 'open');
-
-module.exports = { prsSearch };
+module.exports = { searchPrs };
