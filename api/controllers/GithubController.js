@@ -1,5 +1,5 @@
 /**
- * SearchPrController
+ * GithubController
  *
  * @description :: Server-side logic for managing searchprs
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
