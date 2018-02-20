@@ -8,7 +8,7 @@ const _ = require('lodash');
 const githubSearch = require('../services/GithubSearch');
 
 module.exports = {
-    searchPullRequest: async function (req, res) {
+    search: async function (req, res) {
         const request = _.get(req, 'body', {});
         const users = _.get(request, 'users', {});
         const dateRange = _.get(request, 'dateRange', {});

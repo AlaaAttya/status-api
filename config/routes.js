@@ -35,7 +35,7 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
-  'POST /search-prs': 'SearchController.searchPullRequest',
+  'POST /search-prs': 'GithubController.search',
 
   /***************************************************************************
   *                                                                          *
